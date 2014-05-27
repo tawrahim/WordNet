@@ -9,30 +9,23 @@ import java.util.Map.Entry;
  * 
  */
 public class WordNet {
-
-<<<<<<< HEAD
-  private ArrayList<String> nouns = new ArrayList<>();
-  private HashMap<Integer, WordObject> map = new HashMap<>();
-
-  // We don't know the length of synset entries - Trying very hard to
-  // make the constructor run in O(1); we can implement some automatic
-  // resizing mechanism but that I don't think is efficient either 
-  private Digraph wordGraph = new Digraph(33);
   
-  /**
-   * Constructor does a lot of work by building our
-   * required data structures
-   * Computation Cost:
-   *                 All the time: O(E)
-   * @param synset
-   * @param hypernyms
-   */
-=======
   private ArrayList<String> nouns;
   private Digraph wordGraph;
   private HashMap<Integer, WordObject> map = new HashMap<>();
 
->>>>>>> parent of 00ff111... More code
+  /**
+   * Constructor does a lot of work by building our
+   * required data structures
+   * Computation Cost:
+   *                 All the time: O(E^2)
+   *                 Required time: O(n log n)
+   * The cost is O(E^2) because we are processing two
+   * inputs. A better optimization would be to try and
+   * get it down to O(E) by combining the processing
+   * @param synset
+   * @param hypernyms
+   */
   public WordNet(String synset, String hypernyms) {
     In synsetEntries = new In(synset);
     In hypernymsEntries = new In(hypernyms);
@@ -42,13 +35,9 @@ public class WordNet {
     String line;
     String[] temp;
     
-    int hyphernymsId;
-    String hyphernymsLine;
-    String[] hyphernymsTemp;
-    
-    
+
     // Process the synset
-    while (synsetEntries.hasNextLine() || hypernymsEntries.hasNextLine()) {
+    while (synsetEntries.hasNextLine()) {
       line = synsetEntries.readLine();
       temp = line.split(",");
       
@@ -73,14 +62,21 @@ public class WordNet {
       // Make a new instance of word Object
       WordObject wo = new WordObject(id, sentence, synonyms);
       map.put(id, wo);
+    }
+
+    // Build the graph
+    if (map != null) {
+      wordGraph = new Digraph(map.size());
       
-      // process the hyphernyms
-      hyphernymsLine = hypernymsEntries.readLine();
-      hyphernymsTemp = hyphernymsLine.split(",");
-      hyphernymsId = Integer.parseInt(temp[0]);
-      
-      for (int i = 1; i < hyphernymsTemp.length; i++) {
-        wordGraph.addEdge(hyphernymsId, Integer.parseInt(hyphernymsTemp[i]));
+      // process the hypernyms
+      while (hypernymsEntries.hasNextLine()) {
+        line = hypernymsEntries.readLine();
+        temp = line.split(",");
+        id = Integer.parseInt(temp[0]);
+
+        for (int i = 1; i < temp.length; i++) {
+          wordGraph.addEdge(id, Integer.parseInt(temp[i]));
+        }
       }
     }
   }
@@ -118,8 +114,6 @@ public class WordNet {
   /**
 <<<<<<< HEAD
    * Call the sap method to get distance between two points
-   * Computation cost:
-   *                All the time: depends on sap implementation
    * @param nounA
    * @param nounB
    * @return
@@ -130,29 +124,24 @@ public class WordNet {
 
   /**
    * Shortest ancestral path between two points is tricky 
-=======
    * Distance between two points is tricky 
->>>>>>> parent of 00ff111... More code
    * Current implementation is O(E^2) in the worst case
    *  which is very BAD!!!
    * It takes E to find nounA and another E to find nounB
    * @param nounA
    * @param nounB
    */
-  public void distance(String nounA, String nounB) {
-    if (nounA == null || nounB == null) return;
-    if (!isNoun(nounA) || !isNoun(nounB)) return;
+  public int sap(String nounA, String nounB) {
+    if (nounA == null || nounB == null) return -1;
+    if (!isNoun(nounA) || !isNoun(nounB)) return -1;
     
     int nounAKey = wordObj(nounA);
     int nounBKey = wordObj(nounB);
     
     // Now we call the depth first search on the two id's
-    
+    return -1;
   }
 
-  public void sap(String nounA, String nounB) {
-
-  }
 
   /**
    * @return the nouns
