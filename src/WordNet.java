@@ -10,6 +10,7 @@ import java.util.Map.Entry;
  */
 public class WordNet {
 
+<<<<<<< HEAD
   private ArrayList<String> nouns = new ArrayList<>();
   private HashMap<Integer, WordObject> map = new HashMap<>();
 
@@ -26,6 +27,12 @@ public class WordNet {
    * @param synset
    * @param hypernyms
    */
+=======
+  private ArrayList<String> nouns;
+  private Digraph wordGraph;
+  private HashMap<Integer, WordObject> map = new HashMap<>();
+
+>>>>>>> parent of 00ff111... More code
   public WordNet(String synset, String hypernyms) {
     In synsetEntries = new In(synset);
     In hypernymsEntries = new In(hypernyms);
@@ -60,11 +67,7 @@ public class WordNet {
         synonyms.add(synonymArray[i]);
         
         // Also add the noun to our giant noun array list
-        // make sure that there are no duplicates
-        if (!nouns.contains(synonymArray[i])) {
-          nouns.add(synonymArray[i]);
-        }
-          
+        nouns.add(synonymArray[i]);
       }
       
       // Make a new instance of word Object
@@ -92,7 +95,7 @@ public class WordNet {
    * @return
    */
   public int wordObj(String word) {
-    for (final Entry<Integer, WordObject> entry : map.entrySet()) {
+    for (Entry<Integer, WordObject> entry : map.entrySet()) {
       int key = entry.getKey();
       if (map.get(key).getSynonyms().contains(word)) return key;
     }
@@ -108,13 +111,12 @@ public class WordNet {
    * @return
    */
   public boolean isNoun(String word) {
-    if (nouns != null) {
-      if (nouns.contains(word)) return true;
-    }
+    if (nouns.contains(word)) return true;
     return false;
   }
   
   /**
+<<<<<<< HEAD
    * Call the sap method to get distance between two points
    * Computation cost:
    *                All the time: depends on sap implementation
@@ -128,19 +130,28 @@ public class WordNet {
 
   /**
    * Shortest ancestral path between two points is tricky 
+=======
+   * Distance between two points is tricky 
+>>>>>>> parent of 00ff111... More code
    * Current implementation is O(E^2) in the worst case
    *  which is very BAD!!!
    * It takes E to find nounA and another E to find nounB
    * @param nounA
    * @param nounB
-   */  
-  public int sap(String nounA, String nounB) {
-    if (nounA == null || nounB == null) return -1;
-    if (!isNoun(nounA) || !isNoun(nounB)) return -1;
+   */
+  public void distance(String nounA, String nounB) {
+    if (nounA == null || nounB == null) return;
+    if (!isNoun(nounA) || !isNoun(nounB)) return;
     
     int nounAKey = wordObj(nounA);
     int nounBKey = wordObj(nounB);
-    return 1;
+    
+    // Now we call the depth first search on the two id's
+    
+  }
+
+  public void sap(String nounA, String nounB) {
+
   }
 
   /**
