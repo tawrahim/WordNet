@@ -11,17 +11,18 @@ import java.util.Map.Entry;
 public class WordNet {
 
   private ArrayList<String> nouns = new ArrayList<>();
-  private Digraph wordGraph;
   private HashMap<Integer, WordObject> map = new HashMap<>();
 
+  // We don't know the length of synset entries - Trying very hard to
+  // make the constructor run in O(1); we can implement some automatic
+  // resizing mechanism but that I don't think is efficient either 
+  private Digraph wordGraph = new Digraph(33);
+  
   /**
    * Constructor does a lot of work by building our
    * required data structures
    * Computation Cost:
-   *                 All the time: O(E^2)
-   * The cost is O(E^2) because we are processing two
-   * inputs. A better optimization would be to try and
-   * get it down to O(E) by combining the processing
+   *                 All the time: O(E)
    * @param synset
    * @param hypernyms
    */
@@ -34,9 +35,13 @@ public class WordNet {
     String line;
     String[] temp;
     
-
+    int hyphernymsId;
+    String hyphernymsLine;
+    String[] hyphernymsTemp;
+    
+    
     // Process the synset
-    while (synsetEntries.hasNextLine()) {
+    while (synsetEntries.hasNextLine() || hypernymsEntries.hasNextLine()) {
       line = synsetEntries.readLine();
       temp = line.split(",");
       
@@ -65,21 +70,14 @@ public class WordNet {
       // Make a new instance of word Object
       WordObject wo = new WordObject(id, sentence, synonyms);
       map.put(id, wo);
-    }
-
-    // Build the graph
-    if (map != null) {
-      wordGraph = new Digraph(map.size());
       
-      // process the hypernyms
-      while (hypernymsEntries.hasNextLine()) {
-        line = hypernymsEntries.readLine();
-        temp = line.split(",");
-        id = Integer.parseInt(temp[0]);
-
-        for (int i = 1; i < temp.length; i++) {
-          wordGraph.addEdge(id, Integer.parseInt(temp[i]));
-        }
+      // process the hyphernyms
+      hyphernymsLine = hypernymsEntries.readLine();
+      hyphernymsTemp = hyphernymsLine.split(",");
+      hyphernymsId = Integer.parseInt(temp[0]);
+      
+      for (int i = 1; i < hyphernymsTemp.length; i++) {
+        wordGraph.addEdge(hyphernymsId, Integer.parseInt(hyphernymsTemp[i]));
       }
     }
   }
@@ -118,6 +116,8 @@ public class WordNet {
   
   /**
    * Call the sap method to get distance between two points
+   * Computation cost:
+   *                All the time: depends on sap implementation
    * @param nounA
    * @param nounB
    * @return
