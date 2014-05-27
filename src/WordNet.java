@@ -10,10 +10,9 @@ import java.util.Map.Entry;
  */
 public class WordNet {
 
-  private Bag<String> nouns;
+  private ArrayList<String> nouns;
   private Digraph wordGraph;
   private HashMap<Integer, WordObject> map = new HashMap<>();
-  private int objId;
 
   public WordNet(String synset, String hypernyms) {
     In synsetEntries = new In(synset);
@@ -40,11 +39,11 @@ public class WordNet {
       String [] synonymArray = temp[2].split(" ");
       ArrayList<String> synonyms = new ArrayList<>();
 
-      // build world list array
+      // build word list array
       for (int i = 0; i < synonymArray.length; i++) {
         synonyms.add(synonymArray[i]);
         
-        // Also add the noun to our giant noun bag
+        // Also add the noun to our giant noun array list
         nouns.add(synonymArray[i]);
       }
       
@@ -71,42 +70,49 @@ public class WordNet {
   }
 
   /**
-   * Computation cost is the number of Edges (E)
+   * Finds the actual id of a given word
+   * Computation cost:
+   *               Worst case: O(E)
+   *               Best case: O(1)
+   *               Average Case: O(E/2)
+   * @param word
+   * @return
+   */
+  public int wordObj(String word) {
+    for (Entry<Integer, WordObject> entry : map.entrySet()) {
+      int key = entry.getKey();
+      if (map.get(key).getSynonyms().contains(word)) return key;
+    }
+    return -1;
+  }
+  
+  /**
+   * Checks to see whether a given word is a noun
+   * Basically does it exist in our List
+   * Computation cost:
+   *                  All the time: O(1)
    * @param word
    * @return
    */
   public boolean isNoun(String word) {
-    boolean found = false;
-    for (Entry<Integer, WordObject> entry : map.entrySet()) {
-      int key = entry.getKey();
-      
-      if (map.get(key).getSynonyms().contains(word)) {
-        found = true;
-        objId = key;
-      }
-    }
-    return found;
+    if (nouns.contains(word)) return true;
+    return false;
   }
   
   /**
    * Distance between two points is tricky 
-   * Current implementation is E^2 which is very BAD!
+   * Current implementation is O(E^2) in the worst case
+   *  which is very BAD!!!
    * It takes E to find nounA and another E to find nounB
    * @param nounA
    * @param nounB
    */
   public void distance(String nounA, String nounB) {
     if (nounA == null || nounB == null) return;
+    if (!isNoun(nounA) || !isNoun(nounB)) return;
     
-    // finding nounA also modifies the objectId so we
-    // store it in a key
-    isNoun(nounA);
-    int nounAKey = objId;
-    
-    // finding nounA also modifies the objectId so we
-    // store it in a key
-    isNoun(nounB);
-    int nounBKey = objId;
+    int nounAKey = wordObj(nounA);
+    int nounBKey = wordObj(nounB);
     
     // Now we call the depth first search on the two id's
     
@@ -119,7 +125,7 @@ public class WordNet {
   /**
    * @return the nouns
    */
-  public Bag<String> nouns() {
+  public ArrayList<String> nouns() {
     return nouns;
   }
 
