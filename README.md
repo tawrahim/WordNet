@@ -1,5 +1,7 @@
 ## Programming Assignment 1: WordNet
 
+### Jump to the explanation of my [implementation](#solution)
+
 [WordNet][0] is a semantic lexicon for the
 English language that is used extensively by computational linguists
 and cognitive scientists; for example, it was a key component in IBM's
@@ -317,10 +319,12 @@ java.lang, java.util, stdlib.jar, and algs4.jar.
   
 ---
 
-_This assignment was created by Alina Ene and Kevin Wayne.
-_
+_This assignment was created by Alina Ene and Kevin Wayne._
 
 Copyright (c) 2006
+
+## Solution
+
 
 
 [0]: http://wordnet.princeton.edu/
